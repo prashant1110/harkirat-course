@@ -39,11 +39,76 @@
 
   Testing the server - run `npm run test-todoServer` command in terminal
  */
-  const express = require('express');
-  const bodyParser = require('body-parser');
+  const express = require("express");
+  const bodyParser = require("body-parser");
   
   const app = express();
   
   app.use(bodyParser.json());
   
+  let users = [
+    {
+      title: "Prashant",
+      description: "MY name is Prashant",
+    },
+    {
+      title: "Rahul",
+      description: "MY name is Rahul",
+    },
+  ];
+  
+  app.get("/todos", (req, res) => {
+    res.status(200).json(users);
+  });
+  
+  app.get("/todos/:id", (req, res) => {
+    const id = req.params.id;
+    if (!res) {
+      return res.status(404);
+    }
+    res.status(200).json(users[id]);
+  });
+  
+  app.post("/todos", (req, res) => {
+    const newUsers = {
+      id: 2,
+      title: req.body.title,
+      description: req.body.description,
+    };
+    users.push(newTodo);
+    res.status(201).json(users);
+  });
+  
+  app.put('/todos/:id',(req,res)=>{
+    const id = users.findIndex((t)=>t.id===req.params.id);
+    if(id===-1){
+      return res.status(404);
+    }else{
+      users[id].title = req.body.title;
+      users[id].description = req.body.description;
+      res.status(200).json(users);
+    }
+    
+  })
+  
+  app.delete('todos/:id',(req,res)=>{
+    const id = users.findIndex((t)=>t.id===req.params.id);
+    if(id===-1){
+      return res.status(404);
+    }else{
+      users.splice(id,1);
+      res.status(200).json(users);
+    }
+  })
+  
+  app.all("*", (req, res) => {
+    res.status(404).json({
+      message: "Route not found",
+    });
+  });
+  app.listen(3000, (req, res) => {
+    console.log("server started");
+  });
+  
   module.exports = app;
+  
